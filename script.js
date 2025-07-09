@@ -1,31 +1,312 @@
-// Mobile Navigation Toggle
-const hamburger = document.querySelector('.hamburger');
-const navMenu = document.querySelector('.nav-menu');
-
-hamburger.addEventListener('click', () => {
-    hamburger.classList.toggle('active');
-    navMenu.classList.toggle('active');
-});
-
-// Close mobile menu when clicking on a link
-document.querySelectorAll('.nav-link').forEach(n => n.addEventListener('click', () => {
-    hamburger.classList.remove('active');
-    navMenu.classList.remove('active');
-}));
-
-// Navbar background change on scroll
-window.addEventListener('scroll', () => {
-    const navbar = document.querySelector('.navbar');
-    if (window.scrollY > 100) {
-        navbar.style.background = 'rgba(255, 255, 255, 0.98)';
-        navbar.style.boxShadow = '0 2px 20px rgba(0, 0, 0, 0.1)';
-    } else {
-        navbar.style.background = 'rgba(255, 255, 255, 0.95)';
-        navbar.style.boxShadow = 'none';
+// Portfolio Interactive Skills Section
+class SkillsPortfolio {
+    constructor() {
+        this.stickyNotes = [];
+        this.currentFilter = 'all';
+        this.isDragging = false;
+        this.dragElement = null;
+        this.initialPositions = new Map();
+        
+        this.init();
     }
+
+    init() {
+        this.setupStickyNotes();
+        this.setupEventListeners();
+        this.setupAnimations();
+        this.saveInitialPositions();
+    }
+
+    setupStickyNotes() {
+        const notes = document.querySelectorAll('.sticky-note');
+        notes.forEach((note, index) => {
+            // Set animation delay and rotation for staggered entrance
+            note.style.setProperty('--index', index);
+            note.style.setProperty('--rotation', this.getRandomRotation());
+            
+            this.stickyNotes.push(note);
+            
+            // Add click handler for expansion
+            note.addEventListener('click', (e) => this.handleNoteClick(e, note));
+            
+            // Add keyboard support
+            note.addEventListener('keydown', (e) => this.handleNoteKeydown(e, note));
+            note.setAttribute('tabindex', '0');
+            note.setAttribute('role', 'button');
+            note.setAttribute('aria-label', `Skill: ${note.querySelector('h3').textContent}. Click to expand.`);
+        });
+    }
+
+    setupEventListeners() {
+        // Filter buttons
+        const filterButtons = document.querySelectorAll('.filter-btn');
+        filterButtons.forEach(btn => {
+            btn.addEventListener('click', (e) => this.handleFilter(e));
+        });
+
+        // Reset layout button
+        const resetBtn = document.getElementById('resetLayout');
+        resetBtn.addEventListener('click', () => this.resetLayout());
+
+        // Drag and drop functionality
+        this.setupDragAndDrop();
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => this.handleGlobalKeydown(e));
+
+        // Touch events for mobile
+        this.setupTouchEvents();
+    }
+
+    setupDragAndDrop() {
+        this.stickyNotes.forEach(note => {
+            note.addEventListener('mousedown', (e) => this.startDrag(e, note));
+            note.addEventListener('touchstart', (e) => this.startDrag(e, note), { passive: false });
+        });
+
+        document.addEventListener('mousemove', (e) => this.drag(e));
+        document.addEventListener('touchmove', (e) => this.drag(e), { passive: false });
+        document.addEventListener('mouseup', () => this.endDrag());
+        document.addEventListener('touchend', () => this.endDrag());
+    }
+
+    setupTouchEvents() {
+        this.stickyNotes.forEach(note => {
+            note.addEventListener('touchstart', (e) => {
+                // Prevent default to avoid scrolling while dragging
+                e.preventDefault();
+            }, { passive: false });
+        });
+    }
+
+    startDrag(e, note) {
+        if (e.target.closest('.sticky-header') || e.target.closest('.sticky-content')) {
+            return; // Don't start drag if clicking on content
+        }
+
+        this.isDragging = true;
+        this.dragElement = note;
+        
+        // Add dragging class
+        note.classList.add('dragging');
+        
+        // Get initial position
+        const rect = note.getBoundingClientRect();
+        this.dragOffset = {
+            x: e.clientX - rect.left,
+            y: e.clientY - rect.top
+        };
+
+        // Prevent text selection
+        e.preventDefault();
+    }
+
+    drag(e) {
+        if (!this.isDragging || !this.dragElement) return;
+
+        const clientX = e.clientX || (e.touches && e.touches[0].clientX);
+        const clientY = e.clientY || (e.touches && e.touches[0].clientY);
+
+        if (!clientX || !clientY) return;
+
+        const canvas = document.getElementById('skillsCanvas');
+        const canvasRect = canvas.getBoundingClientRect();
+        
+        // Calculate new position
+        let newX = clientX - canvasRect.left - this.dragOffset.x;
+        let newY = clientY - canvasRect.top - this.dragOffset.y;
+        
+        // Constrain to canvas bounds
+        const noteWidth = this.dragElement.offsetWidth;
+        const noteHeight = this.dragElement.offsetHeight;
+        
+        newX = Math.max(0, Math.min(newX, canvasRect.width - noteWidth));
+        newY = Math.max(0, Math.min(newY, canvasRect.height - noteHeight));
+        
+        // Apply new position
+        this.dragElement.style.left = newX + 'px';
+        this.dragElement.style.top = newY + 'px';
+        this.dragElement.style.transform = 'rotate(0deg)'; // Straighten while dragging
+        
+        e.preventDefault();
+    }
+
+    endDrag() {
+        if (this.dragElement) {
+            this.dragElement.classList.remove('dragging');
+            this.dragElement = null;
+        }
+        this.isDragging = false;
+    }
+
+    handleNoteClick(e, note) {
+        if (this.isDragging) return; // Don't expand if we were dragging
+        
+        // Toggle expansion
+        const isExpanded = note.classList.contains('expanded');
+        
+        // Collapse all other notes first
+        this.stickyNotes.forEach(n => n.classList.remove('expanded'));
+        
+        if (!isExpanded) {
+            note.classList.add('expanded');
+            note.setAttribute('aria-expanded', 'true');
+            
+            // Add subtle animation
+            note.style.animation = 'none';
+            note.offsetHeight; // Trigger reflow
+            note.style.animation = 'expandNote 0.3s ease-out';
+        } else {
+            note.setAttribute('aria-expanded', 'false');
+        }
+    }
+
+    handleNoteKeydown(e, note) {
+        if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            this.handleNoteClick(e, note);
+        }
+    }
+
+    handleGlobalKeydown(e) {
+        if (e.key === 'Escape') {
+            // Collapse all expanded notes
+            this.stickyNotes.forEach(note => {
+                note.classList.remove('expanded');
+                note.setAttribute('aria-expanded', 'false');
+            });
+        }
+    }
+
+    handleFilter(e) {
+        const category = e.currentTarget.dataset.category;
+        
+        // Update active button
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+        e.currentTarget.classList.add('active');
+        
+        this.currentFilter = category;
+        this.filterNotes(category);
+    }
+
+    filterNotes(category) {
+        this.stickyNotes.forEach(note => {
+            const noteCategory = note.dataset.category;
+            const shouldShow = category === 'all' || noteCategory === category;
+            
+            if (shouldShow) {
+                note.classList.remove('hidden');
+                note.style.animation = 'fadeInUp 0.4s ease-out';
+            } else {
+                note.classList.add('hidden');
+            }
+        });
+    }
+
+    saveInitialPositions() {
+        this.stickyNotes.forEach(note => {
+            const rect = note.getBoundingClientRect();
+            const canvas = document.getElementById('skillsCanvas');
+            const canvasRect = canvas.getBoundingClientRect();
+            
+            this.initialPositions.set(note, {
+                left: rect.left - canvasRect.left,
+                top: rect.top - canvasRect.top,
+                transform: note.style.transform
+            });
+        });
+    }
+
+    resetLayout() {
+        // Collapse all expanded notes
+        this.stickyNotes.forEach(note => {
+            note.classList.remove('expanded');
+            note.setAttribute('aria-expanded', 'false');
+        });
+
+        // Reset to initial positions with animation
+        this.stickyNotes.forEach((note, index) => {
+            const initialPos = this.initialPositions.get(note);
+            if (initialPos) {
+                note.style.transition = 'all 0.6s ease-out';
+                note.style.left = initialPos.left + 'px';
+                note.style.top = initialPos.top + 'px';
+                note.style.transform = initialPos.transform;
+                
+                // Reset transition after animation
+                setTimeout(() => {
+                    note.style.transition = '';
+                }, 600);
+            }
+        });
+
+        // Reset filter
+        this.currentFilter = 'all';
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+        document.querySelector('[data-category="all"]').classList.add('active');
+        this.filterNotes('all');
+    }
+
+    setupAnimations() {
+        // Add CSS animation for note expansion
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes expandNote {
+                0% { transform: scale(1) rotate(var(--rotation)); }
+                50% { transform: scale(1.1) rotate(0deg); }
+                100% { transform: scale(1.05) rotate(0deg); }
+            }
+            
+            .sticky-note.dragging {
+                z-index: 1000 !important;
+                box-shadow: 0 12px 24px rgba(0,0,0,0.2) !important;
+            }
+        `;
+        document.head.appendChild(style);
+    }
+
+    getRandomRotation() {
+        return Math.random() * 8 - 4; // Random rotation between -4 and 4 degrees
+    }
+}
+
+// Initialize when DOM is loaded
+document.addEventListener('DOMContentLoaded', () => {
+    new SkillsPortfolio();
+    
+    // Add some playful interactions
+    const canvas = document.getElementById('skillsCanvas');
+    
+    // Add subtle parallax effect on mouse move
+    canvas.addEventListener('mousemove', (e) => {
+        if (window.innerWidth > 768) { // Only on desktop
+            const rect = canvas.getBoundingClientRect();
+            const x = (e.clientX - rect.left) / rect.width;
+            const y = (e.clientY - rect.top) / rect.height;
+            
+            document.querySelectorAll('.sticky-note:not(.dragging):not(.expanded)').forEach(note => {
+                const speed = 0.02;
+                const moveX = (x - 0.5) * speed * 20;
+                const moveY = (y - 0.5) * speed * 20;
+                
+                note.style.transform = `translate(${moveX}px, ${moveY}px) rotate(var(--rotation))`;
+            });
+        }
+    });
+    
+    // Reset parallax when mouse leaves
+    canvas.addEventListener('mouseleave', () => {
+        document.querySelectorAll('.sticky-note:not(.dragging):not(.expanded)').forEach(note => {
+            note.style.transform = `rotate(var(--rotation))`;
+        });
+    });
 });
 
-// Smooth scrolling for navigation links
+// Add smooth scrolling for navigation links
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function (e) {
         e.preventDefault();
@@ -39,123 +320,7 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     });
 });
 
-// Active navigation link highlighting
-window.addEventListener('scroll', () => {
-    const sections = document.querySelectorAll('section[id]');
-    const navLinks = document.querySelectorAll('.nav-link');
-    
-    let current = '';
-    sections.forEach(section => {
-        const sectionTop = section.offsetTop;
-        const sectionHeight = section.clientHeight;
-        if (scrollY >= (sectionTop - 200)) {
-            current = section.getAttribute('id');
-        }
-    });
-
-    navLinks.forEach(link => {
-        link.classList.remove('active');
-        if (link.getAttribute('href') === `#${current}`) {
-            link.classList.add('active');
-        }
-    });
-});
-
-// Contact form handling
-const contactForm = document.querySelector('.contact-form');
-if (contactForm) {
-    contactForm.addEventListener('submit', function(e) {
-        e.preventDefault();
-        
-        // Get form data
-        const formData = new FormData(this);
-        const name = formData.get('name');
-        const email = formData.get('email');
-        const subject = formData.get('subject');
-        const message = formData.get('message');
-        
-        // Basic validation
-        if (!name || !email || !subject || !message) {
-            showNotification('Please fill in all fields', 'error');
-            return;
-        }
-        
-        if (!isValidEmail(email)) {
-            showNotification('Please enter a valid email address', 'error');
-            return;
-        }
-        
-        // Simulate form submission
-        showNotification('Message sent successfully! I\'ll get back to you soon.', 'success');
-        this.reset();
-    });
-}
-
-// Email validation function
-function isValidEmail(email) {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
-}
-
-// Notification system
-function showNotification(message, type = 'info') {
-    // Remove existing notifications
-    const existingNotification = document.querySelector('.notification');
-    if (existingNotification) {
-        existingNotification.remove();
-    }
-    
-    // Create notification element
-    const notification = document.createElement('div');
-    notification.className = `notification notification-${type}`;
-    notification.innerHTML = `
-        <div class="notification-content">
-            <span class="notification-message">${message}</span>
-            <button class="notification-close">&times;</button>
-        </div>
-    `;
-    
-    // Add styles
-    notification.style.cssText = `
-        position: fixed;
-        top: 100px;
-        right: 20px;
-        background: ${type === 'success' ? '#10b981' : type === 'error' ? '#ef4444' : '#6366f1'};
-        color: white;
-        padding: 1rem 1.5rem;
-        border-radius: 8px;
-        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-        z-index: 10000;
-        transform: translateX(100%);
-        transition: transform 0.3s ease;
-        max-width: 400px;
-    `;
-    
-    // Add to page
-    document.body.appendChild(notification);
-    
-    // Animate in
-    setTimeout(() => {
-        notification.style.transform = 'translateX(0)';
-    }, 100);
-    
-    // Close button functionality
-    const closeBtn = notification.querySelector('.notification-close');
-    closeBtn.addEventListener('click', () => {
-        notification.style.transform = 'translateX(100%)';
-        setTimeout(() => notification.remove(), 300);
-    });
-    
-    // Auto remove after 5 seconds
-    setTimeout(() => {
-        if (notification.parentNode) {
-            notification.style.transform = 'translateX(100%)';
-            setTimeout(() => notification.remove(), 300);
-        }
-    }, 5000);
-}
-
-// Intersection Observer for animations
+// Add intersection observer for animations
 const observerOptions = {
     threshold: 0.1,
     rootMargin: '0px 0px -50px 0px'
@@ -170,137 +335,10 @@ const observer = new IntersectionObserver((entries) => {
     });
 }, observerOptions);
 
-// Observe elements for animation
-document.addEventListener('DOMContentLoaded', () => {
-    const animatedElements = document.querySelectorAll('.skill-category, .project-card, .stat');
-    
-    animatedElements.forEach(el => {
-        el.style.opacity = '0';
-        el.style.transform = 'translateY(30px)';
-        el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-        observer.observe(el);
-    });
-});
-
-// Typing effect for hero title
-function typeWriter(element, text, speed = 100) {
-    let i = 0;
-    element.innerHTML = '';
-    
-    function type() {
-        if (i < text.length) {
-            element.innerHTML += text.charAt(i);
-            i++;
-            setTimeout(type, speed);
-        }
-    }
-    
-    type();
-}
-
-// Initialize typing effect when page loads
-document.addEventListener('DOMContentLoaded', () => {
-    const heroTitle = document.querySelector('.hero-title');
-    if (heroTitle) {
-        const originalText = heroTitle.innerHTML;
-        setTimeout(() => {
-            typeWriter(heroTitle, originalText, 50);
-        }, 500);
-    }
-});
-
-// Project card hover effects
-document.querySelectorAll('.project-card').forEach(card => {
-    card.addEventListener('mouseenter', function() {
-        this.style.transform = 'translateY(-10px) scale(1.02)';
-    });
-    
-    card.addEventListener('mouseleave', function() {
-        this.style.transform = 'translateY(0) scale(1)';
-    });
-});
-
-// Skill item hover effects
-document.querySelectorAll('.skill-item').forEach(item => {
-    item.addEventListener('mouseenter', function() {
-        this.style.transform = 'scale(1.1) rotate(2deg)';
-    });
-    
-    item.addEventListener('mouseleave', function() {
-        this.style.transform = 'scale(1) rotate(0deg)';
-    });
-});
-
-// Parallax effect for hero section
-window.addEventListener('scroll', () => {
-    const scrolled = window.pageYOffset;
-    const hero = document.querySelector('.hero');
-    if (hero) {
-        const rate = scrolled * -0.5;
-        hero.style.transform = `translateY(${rate}px)`;
-    }
-});
-
-// Loading animation
-window.addEventListener('load', () => {
-    document.body.style.opacity = '0';
-    document.body.style.transition = 'opacity 0.5s ease';
-    
-    setTimeout(() => {
-        document.body.style.opacity = '1';
-    }, 100);
-});
-
-// Add CSS for notification styles
-const notificationStyles = document.createElement('style');
-notificationStyles.textContent = `
-    .notification-content {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 1rem;
-    }
-    
-    .notification-close {
-        background: none;
-        border: none;
-        color: white;
-        font-size: 1.5rem;
-        cursor: pointer;
-        padding: 0;
-        line-height: 1;
-    }
-    
-    .notification-close:hover {
-        opacity: 0.8;
-    }
-    
-    .nav-link.active {
-        color: #6366f1;
-    }
-    
-    .nav-link.active::after {
-        width: 100%;
-    }
-`;
-document.head.appendChild(notificationStyles);
-
-// Force-hide the fake loader immediately on DOMContentLoaded
-window.addEventListener('DOMContentLoaded', () => {
-  const loader = document.getElementById('fake-loader');
-  if (loader) {
-    loader.style.opacity = 0;
-    setTimeout(() => {
-      loader.style.display = 'none';
-    }, 500);
-  }
-});
-
-// Smooth scroll for contact button
-const contactBtn = document.querySelector('.btn-contact');
-if (contactBtn) {
-  contactBtn.addEventListener('click', (e) => {
-    e.preventDefault();
-    document.getElementById('contact').scrollIntoView({ behavior: 'smooth' });
-  });
-} 
+// Observe sections for scroll animations
+document.querySelectorAll('.section').forEach(section => {
+    section.style.opacity = '0';
+    section.style.transform = 'translateY(30px)';
+    section.style.transition = 'opacity 0.6s ease-out, transform 0.6s ease-out';
+    observer.observe(section);
+}); 
