@@ -3,127 +3,314 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ayesha – Creative Health Tech Developer</title>
+    <title>Portfolio - Interactive Skills</title>
     <link rel="stylesheet" href="styles.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Fira+Mono:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Kalam:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-    <div id="fake-loader">
-        <div class="loader-text">Loading<span class="dot">.</span><span class="dot">.</span><span class="dot">.</span></div>
-    </div>
-    <header class="hero">
+    <header class="header">
         <nav class="nav">
-            <div class="nav-left">
-                <span class="logo">A</span>
+            <div class="nav-brand">
+                <h1>Portfolio</h1>
             </div>
-            <div class="nav-right">
-                <a href="https://github.com/ayeshafatimazra" target="_blank" aria-label="GitHub"><i class="fab fa-github"></i></a>
-                <a href="https://www.linkedin.com/in/ayesha-fatima00" target="_blank" aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a>
-            </div>
+            <ul class="nav-menu">
+                <li><a href="#about">About</a></li>
+                <li><a href="#skills">Skills</a></li>
+                <li><a href="#projects">Projects</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
         </nav>
-        <div class="hero-content">
-            <h1 class="hero-title">Ayesha Fatima</h1>
-            <p class="hero-desc">Creative developer & health tech enthusiast, dedicated to building impactful digital experiences for healthcare and beyond.</p>
-            <div class="hero-terminal">
-                <span class="terminal-prompt">ayesha@portfolio:~$</span> <span class="terminal-cursor">|</span>
-            </div>
-            <div class="hero-cta">
-                <span class="available">Available for freelance</span>
-                <a href="#contact" class="btn-contact">Get in touch</a>
-            </div>
-        </div>
     </header>
+
     <main>
-        <section class="terminal-block">
-            <h2 class="section-title">About</h2>
-            <div class="terminal-content">
-                <div class="terminal-line"><span class="terminal-prompt">ayesha@portfolio:~$</span> <span class="terminal-cmd">whoami</span></div>
-                <div class="terminal-output">Health informatics grad student, creative coder, and digital health enthusiast. I love blending code, data, and design to make healthcare smarter and more human.</div>
+        <section id="about" class="section">
+            <div class="container">
+                <h2>About Me</h2>
+                <p>Passionate about feminist data and health design, creating meaningful experiences through research and technology.</p>
             </div>
         </section>
-        <section class="terminal-block">
-            <h2 class="section-title">Skills</h2>
-            <div class="terminal-content">
-                <div class="terminal-line"><span class="terminal-prompt">ayesha@portfolio:~$</span> <span class="terminal-cmd">cat skills.txt</span></div>
-                <div class="terminal-output">
-                    <strong>Languages/Tools:</strong> Python, R, SQL, Power BI, Tableau, Apache Kafka, Spark, Airflow, TensorFlow, Pandas, NumPy, Bash, Docker, Seaborn<br>
-                    <strong>Data Analysis:</strong> AB testing, time-series, statistics, usability<br>
-                    <strong>Qualitative Research:</strong> NVivo, thematic analysis, usability testing<br>
-                    <strong>Interests:</strong> AI, ML, Data Viz, Digital Health Informatics
+
+        <section id="skills" class="section skills-section">
+            <div class="container">
+                <h2>Skills & Expertise</h2>
+                
+                <div class="skills-controls">
+                    <div class="filter-buttons">
+                        <button class="filter-btn active" data-category="all">
+                            <i class="fas fa-th"></i> All Skills
+                        </button>
+                        <button class="filter-btn" data-category="technical">
+                            <i class="fas fa-code"></i> Technical
+                        </button>
+                        <button class="filter-btn" data-category="data">
+                            <i class="fas fa-chart-bar"></i> Data & Analysis
+                        </button>
+                        <button class="filter-btn" data-category="design">
+                            <i class="fas fa-palette"></i> Design & UX
+                        </button>
+                        <button class="filter-btn" data-category="research">
+                            <i class="fas fa-microscope"></i> Research
+                        </button>
+                        <button class="filter-btn" data-category="soft">
+                            <i class="fas fa-users"></i> Soft Skills
+                        </button>
+                    </div>
+                    <button class="reset-btn" id="resetLayout">
+                        <i class="fas fa-undo"></i> Reset Layout
+                    </button>
+                </div>
+
+                <div class="skills-canvas" id="skillsCanvas">
+                    <!-- Technical Skills -->
+                    <div class="sticky-note technical" data-category="technical" draggable="true">
+                        <div class="sticky-header">
+                            <i class="fas fa-code"></i>
+                            <h3>Python</h3>
+                        </div>
+                        <div class="sticky-content">
+                            <p>Data cleaning, EHR integration, and dashboard development</p>
+                        </div>
+                        <div class="sticky-tape"></div>
+                    </div>
+
+                    <div class="sticky-note technical" data-category="technical" draggable="true">
+                        <div class="sticky-header">
+                            <i class="fas fa-code"></i>
+                            <h3>JavaScript</h3>
+                        </div>
+                        <div class="sticky-content">
+                            <p>Frontend development, interactive visualizations, and web applications</p>
+                        </div>
+                        <div class="sticky-tape"></div>
+                    </div>
+
+                    <div class="sticky-note technical" data-category="technical" draggable="true">
+                        <div class="sticky-header">
+                            <i class="fas fa-code"></i>
+                            <h3>React</h3>
+                        </div>
+                        <div class="sticky-content">
+                            <p>Component-based UI development and state management</p>
+                        </div>
+                        <div class="sticky-tape"></div>
+                    </div>
+
+                    <div class="sticky-note technical" data-category="technical" draggable="true">
+                        <div class="sticky-header">
+                            <i class="fas fa-database"></i>
+                            <h3>SQL</h3>
+                        </div>
+                        <div class="sticky-content">
+                            <p>Database design, complex queries, and data modeling</p>
+                        </div>
+                        <div class="sticky-tape"></div>
+                    </div>
+
+                    <!-- Data & Analysis Skills -->
+                    <div class="sticky-note data" data-category="data" draggable="true">
+                        <div class="sticky-header">
+                            <i class="fas fa-chart-bar"></i>
+                            <h3>A/B Testing</h3>
+                        </div>
+                        <div class="sticky-content">
+                            <p>Designed and analyzed experiments for usability and feature impact</p>
+                        </div>
+                        <div class="sticky-tape"></div>
+                    </div>
+
+                    <div class="sticky-note data" data-category="data" draggable="true">
+                        <div class="sticky-header">
+                            <i class="fas fa-chart-line"></i>
+                            <h3>Data Visualization</h3>
+                        </div>
+                        <div class="sticky-content">
+                            <p>Created interactive dashboards and compelling data stories</p>
+                        </div>
+                        <div class="sticky-tape"></div>
+                    </div>
+
+                    <div class="sticky-note data" data-category="data" draggable="true">
+                        <div class="sticky-header">
+                            <i class="fas fa-calculator"></i>
+                            <h3>Statistical Analysis</h3>
+                        </div>
+                        <div class="sticky-content">
+                            <p>Applied statistical methods for research and data insights</p>
+                        </div>
+                        <div class="sticky-tape"></div>
+                    </div>
+
+                    <div class="sticky-note data" data-category="data" draggable="true">
+                        <div class="sticky-header">
+                            <i class="fas fa-brain"></i>
+                            <h3>Machine Learning</h3>
+                        </div>
+                        <div class="sticky-content">
+                            <p>Predictive modeling and pattern recognition for health data</p>
+                        </div>
+                        <div class="sticky-tape"></div>
+                    </div>
+
+                    <!-- Design & UX Skills -->
+                    <div class="sticky-note design" data-category="design" draggable="true">
+                        <div class="sticky-header">
+                            <i class="fas fa-palette"></i>
+                            <h3>Figma Prototyping</h3>
+                        </div>
+                        <div class="sticky-content">
+                            <p>Built and tested high-fidelity health app interfaces</p>
+                        </div>
+                        <div class="sticky-tape"></div>
+                    </div>
+
+                    <div class="sticky-note design" data-category="design" draggable="true">
+                        <div class="sticky-header">
+                            <i class="fas fa-eye"></i>
+                            <h3>Usability Testing</h3>
+                        </div>
+                        <div class="sticky-content">
+                            <p>Led think-aloud studies for patient apps and interfaces</p>
+                        </div>
+                        <div class="sticky-tape"></div>
+                    </div>
+
+                    <div class="sticky-note design" data-category="design" draggable="true">
+                        <div class="sticky-header">
+                            <i class="fas fa-pencil-ruler"></i>
+                            <h3>Wireframing</h3>
+                        </div>
+                        <div class="sticky-content">
+                            <p>Created user flows and low-fidelity prototypes</p>
+                        </div>
+                        <div class="sticky-tape"></div>
+                    </div>
+
+                    <div class="sticky-note design" data-category="design" draggable="true">
+                        <div class="sticky-header">
+                            <i class="fas fa-mobile-alt"></i>
+                            <h3>Mobile Design</h3>
+                        </div>
+                        <div class="sticky-content">
+                            <p>Responsive design principles and mobile-first approaches</p>
+                        </div>
+                        <div class="sticky-tape"></div>
+                    </div>
+
+                    <!-- Research Skills -->
+                    <div class="sticky-note research" data-category="research" draggable="true">
+                        <div class="sticky-header">
+                            <i class="fas fa-microscope"></i>
+                            <h3>NVivo Coding</h3>
+                        </div>
+                        <div class="sticky-content">
+                            <p>Thematic analysis of interviews for user research</p>
+                        </div>
+                        <div class="sticky-tape"></div>
+                    </div>
+
+                    <div class="sticky-note research" data-category="research" draggable="true">
+                        <div class="sticky-header">
+                            <i class="fas fa-comments"></i>
+                            <h3>User Interviews</h3>
+                        </div>
+                        <div class="sticky-content">
+                            <p>Conducted qualitative research with diverse user groups</p>
+                        </div>
+                        <div class="sticky-tape"></div>
+                    </div>
+
+                    <div class="sticky-note research" data-category="research" draggable="true">
+                        <div class="sticky-header">
+                            <i class="fas fa-search"></i>
+                            <h3>Literature Review</h3>
+                        </div>
+                        <div class="sticky-content">
+                            <p>Comprehensive research synthesis and gap analysis</p>
+                        </div>
+                        <div class="sticky-tape"></div>
+                    </div>
+
+                    <div class="sticky-note research" data-category="research" draggable="true">
+                        <div class="sticky-header">
+                            <i class="fas fa-clipboard-list"></i>
+                            <h3>Survey Design</h3>
+                        </div>
+                        <div class="sticky-content">
+                            <p>Created and distributed research surveys for data collection</p>
+                        </div>
+                        <div class="sticky-tape"></div>
+                    </div>
+
+                    <!-- Soft Skills -->
+                    <div class="sticky-note soft" data-category="soft" draggable="true">
+                        <div class="sticky-header">
+                            <i class="fas fa-users"></i>
+                            <h3>Peer Mentoring</h3>
+                        </div>
+                        <div class="sticky-content">
+                            <p>Guided and taught groups in biostatistics and research methods</p>
+                        </div>
+                        <div class="sticky-tape"></div>
+                    </div>
+
+                    <div class="sticky-note soft" data-category="soft" draggable="true">
+                        <div class="sticky-header">
+                            <i class="fas fa-handshake"></i>
+                            <h3>Collaboration</h3>
+                        </div>
+                        <div class="sticky-content">
+                            <p>Worked effectively in cross-functional teams and partnerships</p>
+                        </div>
+                        <div class="sticky-tape"></div>
+                    </div>
+
+                    <div class="sticky-note soft" data-category="soft" draggable="true">
+                        <div class="sticky-header">
+                            <i class="fas fa-lightbulb"></i>
+                            <h3>Problem Solving</h3>
+                        </div>
+                        <div class="sticky-content">
+                            <p>Analytical thinking and creative solutions for complex challenges</p>
+                        </div>
+                        <div class="sticky-tape"></div>
+                    </div>
+
+                    <div class="sticky-note soft" data-category="soft" draggable="true">
+                        <div class="sticky-header">
+                            <i class="fas fa-bullhorn"></i>
+                            <h3>Communication</h3>
+                        </div>
+                        <div class="sticky-content">
+                            <p>Clear presentation of complex data and research findings</p>
+                        </div>
+                        <div class="sticky-tape"></div>
+                    </div>
                 </div>
             </div>
         </section>
-        <section class="terminal-block">
-            <h2 class="section-title">Experience</h2>
-            <div class="terminal-content">
-                <div class="terminal-line"><span class="terminal-prompt">ayesha@portfolio:~$</span> <span class="terminal-cmd">cat work.txt</span></div>
-                <div class="terminal-output">
-                    <strong>UBIDALab, Northeastern</strong> — Research Volunteer (May 2023–Present)<br>
-                    <span class="exp-detail">• HCI & digital health research, user-centered design studies, qualitative + quantitative analysis.</span><br><br>
-                    <strong>BIONOME | For Next-Gen Biotech</strong> — Health Informatics Intern (Oct 2023–Aug 2024)<br>
-                    <span class="exp-detail">• Automated data extraction, built dashboards, clinical informatics pipelines.</span><br><br>
-                    <strong>Osmania University</strong> — Peer Academic Mentor (Sep 2021–May 2022)<br>
-                    <span class="exp-detail">• Led tutorials, created teaching aids, guided students in bioinformatics/statistics.</span>
-                </div>
+
+        <section id="projects" class="section">
+            <div class="container">
+                <h2>Projects</h2>
+                <p>Coming soon...</p>
             </div>
         </section>
-        <section class="projects" id="projects">
-            <h2 class="section-title">Projects</h2>
-            <div class="projects-list">
-                <div class="project-card">
-                    <div class="project-meta">
-                        <span class="project-year">2024</span>
-                        <span class="project-client">HealthX</span>
-                        <span class="project-tech">React / Node.js / Figma</span>
-                    </div>
-                    <h3 class="project-title">Telehealth Platform</h3>
-                    <p class="project-desc">A secure, scalable telemedicine platform connecting patients and providers with real-time video, chat, and EHR integration.</p>
-                </div>
-                <div class="project-card">
-                    <div class="project-meta">
-                        <span class="project-year">2023</span>
-                        <span class="project-client">MedAI</span>
-                        <span class="project-tech">Python / TensorFlow / Streamlit</span>
-                    </div>
-                    <h3 class="project-title">AI Symptom Checker</h3>
-                    <p class="project-desc">Conversational AI tool for triaging patient symptoms and recommending next steps, used by clinics and urgent care centers.</p>
-                </div>
-                <div class="project-card">
-                    <div class="project-meta">
-                        <span class="project-year">2023</span>
-                        <span class="project-client">Wellness360</span>
-                        <span class="project-tech">Vue.js / Firebase</span>
-                    </div>
-                    <h3 class="project-title">Wellness Tracker App</h3>
-                    <p class="project-desc">Mobile-first app for tracking physical activity, sleep, and mood, with personalized insights and reminders.</p>
-                </div>
-                <div class="project-card">
-                    <div class="project-meta">
-                        <span class="project-year">2022</span>
-                        <span class="project-client">OpenHealth</span>
-                        <span class="project-tech">D3.js / Flask</span>
-                    </div>
-                    <h3 class="project-title">Population Health Dashboard</h3>
-                    <p class="project-desc">Interactive dashboard for visualizing and analyzing population health data for public health officials.</p>
-                </div>
-            </div>
-        </section>
-        <section class="terminal-block contact-block" id="contact">
-            <h2 class="section-title">Contact</h2>
-            <div class="terminal-content">
-                <div class="terminal-line"><span class="terminal-prompt">ayesha@portfolio:~$</span> <span class="terminal-cmd">echo "Let's connect!"</span></div>
-                <div class="terminal-output">Email: <a href="mailto:lnu.aye@northeastern.edu">lnu.aye@northeastern.edu</a></div>
-                <div class="terminal-output">Phone: <a href="tel:16175058303">617-505-8303</a></div>
-                <div class="terminal-output">Location: Boston, USA</div>
-                <div class="terminal-output">LinkedIn: <a href="https://www.linkedin.com/in/ayesha-fatima00" target="_blank">ayesha-fatima00</a></div>
-                <div class="terminal-output">GitHub: <a href="https://github.com/ayeshafatimazra" target="_blank">ayeshafatimazra</a></div>
+
+        <section id="contact" class="section">
+            <div class="container">
+                <h2>Contact</h2>
+                <p>Get in touch to discuss opportunities in feminist data and health design.</p>
             </div>
         </section>
     </main>
+
     <footer class="footer">
-        <span>&copy; 2024 Ayesha Fatima</span>
+        <div class="container">
+            <p>&copy; 2024 Portfolio. Built with passion for feminist data and health design.</p>
+        </div>
     </footer>
+
     <script src="script.js"></script>
 </body>
 </html> 
